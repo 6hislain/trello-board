@@ -63,32 +63,49 @@ import type { Column, Task } from "@/types";
 
 const alt = useKeyModifier("Alt");
 
-const columns = useLocalStorage<Column[]>("trello-board", [
+const columns = useLocalStorage<Column[]>(
+  "trello-board",
+  [
+    {
+      id: nanoid(),
+      title: "backlog",
+      tasks: [
+        {
+          id: nanoid(),
+          title: "create marketing landing page",
+          createdAt: new Date(),
+        },
+        {
+          id: nanoid(),
+          title: "develop cool new features",
+          createdAt: new Date(),
+        },
+        {
+          id: nanoid(),
+          title: "fix page nav bug",
+          createdAt: new Date(),
+        },
+      ],
+    },
+    { id: nanoid(), title: "selected for dev", tasks: [] },
+    { id: nanoid(), title: "in progress", tasks: [] },
+    { id: nanoid(), title: "complete", tasks: [] },
+  ],
   {
-    id: nanoid(),
-    title: "backlog",
-    tasks: [
-      {
-        id: nanoid(),
-        title: "create marketing landing page",
-        createdAt: new Date(),
+    serializer: {
+      write: (value) => JSON.stringify(value),
+      read: (value) => {
+        return JSON.parse(value).map((column: Column) => {
+          column.tasks = column.tasks.map((task: Task) => {
+            task.createdAt = new Date(task.createdAt);
+            return task;
+          });
+          return column;
+        });
       },
-      {
-        id: nanoid(),
-        title: "develop cool new features",
-        createdAt: new Date(),
-      },
-      {
-        id: nanoid(),
-        title: "fix page nav bug",
-        createdAt: new Date(),
-      },
-    ],
-  },
-  { id: nanoid(), title: "selected for dev", tasks: [] },
-  { id: nanoid(), title: "in progress", tasks: [] },
-  { id: nanoid(), title: "complete", tasks: [] },
-]);
+    },
+  }
+);
 
 function createColumn() {
   const column: Column = { id: nanoid(), title: "", tasks: [] };

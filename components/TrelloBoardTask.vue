@@ -1,6 +1,6 @@
 <template>
   <div
-    :title="task.createdAt"
+    :title="task.createdAt.toLocaleDateString()"
     @focus="focused = true"
     @blur="focused = false"
     tabindex="0"
